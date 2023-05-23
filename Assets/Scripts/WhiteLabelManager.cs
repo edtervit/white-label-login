@@ -10,7 +10,6 @@ public class WhiteLabelManager : MonoBehaviour
   [Header("New User")]
   public TMP_InputField newUserEmailInputField;
   public TMP_InputField newUserPasswordInputField;
-  public TMP_InputField nickNameInputField;
 
   [Header("Existing User")]
   public TMP_InputField existingUserEmailInputField;
@@ -28,10 +27,6 @@ public class WhiteLabelManager : MonoBehaviour
 
   [Header("Button animators")]
   public Animator autoLoginButtonAnimator;
-  public Animator backButtonAnimator;
-  public Animator newUserButtonAnimator;
-  public Animator resetPasswordButtonAnimator;
-
 
   //create screen
   public Animator createButtonAnimator;
@@ -42,6 +37,7 @@ public class WhiteLabelManager : MonoBehaviour
   //reset screen 
   public Animator resetEmailInputFieldAnimator;
   public Animator resetBackButtonAnimator;
+  public Animator resetPasswordButtonAnimator;
   public CanvasAnimator resetCanvasAnimator;
 
   //login screen
@@ -400,8 +396,8 @@ public class WhiteLabelManager : MonoBehaviour
                                 return;
                               }
                               Debug.Log("Account Created");
-                              newUserButtonAnimator.SetTrigger("AccountCreated");
-                              backButtonAnimator.SetTrigger("Show");
+                              createButtonAnimator.SetTrigger("AccountCreated");
+                              createBackButtonAnimator.SetTrigger("Show");
                               // New user, turn off remember me
                               rememberMeToggle.isOn = false;
                             });
@@ -471,7 +467,7 @@ public class WhiteLabelManager : MonoBehaviour
           // Session was not valid, show error animation
           // and show back button
           loginButtonAnimator.SetTrigger("Error");
-          backButtonAnimator.SetTrigger("Show");
+          loginBackButtonAnimator.SetTrigger("Show");
 
           // set the remember me bool to false here, so that the next time the player press login
           // they will get to the login screen
@@ -486,17 +482,17 @@ public class WhiteLabelManager : MonoBehaviour
                   {
                     // It was succeful, log in
                     loginButtonAnimator.SetTrigger("Hide");
-                    backButtonAnimator.SetTrigger("Show");
+                    loginBackButtonAnimator.SetTrigger("Hide");
+                    gameCanvasAnimator.CallAppearOnAllAnimators();
                     // Write the current players name to the screen
                     CheckIfPlayerHasName(response.public_uid);
-                    // SetPlayerNameToGameScreen();
                   }
                   else
                   {
                     // Error
                     // Animate the buttons
                     loginButtonAnimator.SetTrigger("Error");
-                    backButtonAnimator.SetTrigger("Show");
+                    loginBackButtonAnimator.SetTrigger("Show");
 
                     Debug.Log("error starting LootLocker session");
                     // set the remember me bool to false here, so that the next time the player press login
