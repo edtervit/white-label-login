@@ -2441,7 +2441,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 1209319469}
+      - m_Target: {fileID: 1072032428}
         m_TargetAssemblyTypeName: CanvasAnimator, Assembly-CSharp
         m_MethodName: CallDisappearOnAllAnimators
         m_Mode: 1
@@ -4762,7 +4762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animators:
-  - {fileID: 1425786418}
+  - {fileID: 429369766}
   - {fileID: 984083558}
   callAppearOnStart: 0
 --- !u!222 &1072032429

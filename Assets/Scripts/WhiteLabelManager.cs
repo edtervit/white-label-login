@@ -154,8 +154,6 @@ public class WhiteLabelManager : MonoBehaviour
       {
         playerName = response.name;
         //if the players name is the same as their publicUID, they have not set a display name
-        //This could happen if the display name was taken when they created their account
-        //since we made it a fallback to set their display name to their publicUID if their name is taken
         if (playerName == "" || playerName.ToLower() == publicUID.ToLower())
         {
           // Player does not have a name, force them to set one
@@ -168,7 +166,7 @@ public class WhiteLabelManager : MonoBehaviour
           // Player has a name, continue
           Debug.Log("Player has a name: " + response.name);
           playerName = response.name;
-          SetPlayerNameToGameScreen();
+          SetPlayerNameToGameScreen(playerName);
         }
       }
     });
@@ -229,9 +227,17 @@ public class WhiteLabelManager : MonoBehaviour
   }
 
   // Write the players name to the screen
-  void SetPlayerNameToGameScreen()
+  void SetPlayerNameToGameScreen(string playerName = null)
   {
-    LootLockerSDKManager.GetPlayerName((response) =>
+    if (playerName != null)
+    {
+      playerNameTextAnimator.ResetTrigger("Hide");
+      playerNameTextAnimator.SetTrigger("Show");
+      playerNameText.text = playerName;
+    }
+    else
+    {
+      LootLockerSDKManager.GetPlayerName((response) =>
     {
       if (response.success)
       {
@@ -240,6 +246,7 @@ public class WhiteLabelManager : MonoBehaviour
         playerNameText.text = response.name;
       }
     });
+    }
   }
 
   // Show an error message on the screen
