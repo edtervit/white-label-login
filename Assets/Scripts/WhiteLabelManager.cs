@@ -28,6 +28,13 @@ public class WhiteLabelManager : MonoBehaviour
   [Header("Button animators")]
   public Animator autoLoginButtonAnimator;
 
+  //start screen
+  public CanvasAnimator startCanvasAnimator;
+  public Animator startGuestLoginButtonAnimator;
+  public Animator startNewUserButtonAnimator;
+  public Animator startLoginButtonAnimator;
+  public Animator startResetPasswordButtonAnimator;
+
   //create screen
   public Animator createButtonAnimator;
   public Animator createBackButtonAnimator;
@@ -50,8 +57,12 @@ public class WhiteLabelManager : MonoBehaviour
   // error screen
   public Animator errorScreenAnimator;
 
+  // leaderboard screen
+  public CanvasAnimator leaderboardCanvasAnimator;
+
   //game screen
   public Animator gameLogoutButtonAnimator;
+  public Animator gameLeaderboardButtonAnimator;
   public CanvasAnimator gameCanvasAnimator;
 
   //newName screen
@@ -64,6 +75,10 @@ public class WhiteLabelManager : MonoBehaviour
   [Header("New Player Name")]
   public TMP_InputField newPlayerNameInputField;
 
+  [Header("Leaderboard")]
+  public TextMeshProUGUI leaderboardGamerText;
+  public TextMeshProUGUI leaderboardScoreText;
+
 
   [Header("Player name")]
   public TextMeshProUGUI playerNameText;
@@ -73,6 +88,11 @@ public class WhiteLabelManager : MonoBehaviour
   public TextMeshProUGUI errorText;
   public GameObject errorPanel;
 
+  public void PlayGame()
+  {
+    //load scene
+    UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+  }
 
   // Called when pressing "LOGIN" on the login-page
   public void Login()
@@ -247,6 +267,8 @@ public class WhiteLabelManager : MonoBehaviour
       }
     });
     }
+    //show all game buttons
+    gameCanvasAnimator.CallAppearOnAllAnimators();
   }
 
   // Show an error message on the screen
@@ -573,6 +595,126 @@ public class WhiteLabelManager : MonoBehaviour
         // Email was sent!
       }
     });
+  }
+
+  public void GetLeaderboardData()
+  {
+
+    //hide all other buttons
+    gameCanvasAnimator.CallDisappearOnAllAnimators(gameLeaderboardButtonAnimator.name);
+    //show leaderboard button and make it spin while loading
+    gameLeaderboardButtonAnimator.SetTrigger("LoadingLeaderboard");
+
+    // the leaderboard key you chose when making a leaderboard in the LootLocker admin panel  
+    string leaderboardKey = "crankyGHighscore";
+    //how many scores to retrieve
+    int count = 10;
+
+    LootLockerSDKManager.GetScoreList(leaderboardKey, count, 0, (response) =>
+    {
+      if (response.success)
+      {
+        // Leaderboard was retrieved
+        Debug.Log("Leaderboard was retrieved");
+        //show the leaderboard screen and populate it with the data
+        // gameLeaderboardButtonAnimator.SetTrigger("Hide");
+        leaderboardCanvasAnimator.CallAppearOnAllAnimators();
+        gameLeaderboardButtonAnimator.SetTrigger("Hide");
+
+        //for each item 
+        foreach (LootLockerLeaderboardMember score in response.items)
+        {
+          //add the score to the text
+          leaderboardGamerText.text += "\n" + score.rank + ". " + score.player.name;
+          leaderboardScoreText.text += "\n" + score.score.ToString();
+        }
+
+      }
+      else
+      {
+        // Error
+        Debug.Log(response.Error);
+        if (response.Error.Contains("message"))
+        {
+          showErrorMessage(extractMessageFromLootLockerError(response.Error));
+        }
+        else
+        {
+          showErrorMessage("Error retrieving leaderboard");
+        }
+        // gameLeaderboardButtonAnimator.SetTrigger("Error");
+        gameCanvasAnimator.CallAppearOnAllAnimators();
+      }
+    });
+
+    //reset all triggers
+    gameLeaderboardButtonAnimator.ResetTrigger("IdleSpin");
+    gameLeaderboardButtonAnimator.ResetTrigger("Error");
+  }
+
+
+
+  public void GuestLogin()
+  {
+    //made guest login spin to show loading
+    startGuestLoginButtonAnimator.SetTrigger("Login");
+    //hide all other buttons
+    startCanvasAnimator.CallDisappearOnAllAnimators(startGuestLoginButtonAnimator.name);
+
+
+    Debug.Log("Guest login");
+
+    //if theres a player identifier saved in browser, log the user in with that, if not create a new guest session
+
+    string guestId = PlayerPrefs.GetString("guestId", "Nada");
+
+    if (guestId == "Nada")
+    {
+      LootLockerSDKManager.StartGuestSession((response) =>
+          {
+            if (!response.success)
+            {
+              Debug.Log("error starting LootLocker session");
+              showErrorMessage("Error logging in as a guest");
+              startGuestLoginButtonAnimator.SetTrigger("Error");
+
+              startCanvasAnimator.CallAppearOnAllAnimators();
+              return;
+            }
+            startCanvasAnimator.CallDisappearOnAllAnimators();
+            // Load game screen
+            Debug.Log(response.public_uid);
+            CheckIfPlayerHasName(response.public_uid);
+            //save identifier to player prefs
+            PlayerPrefs.SetString("guestId", response.player_identifier);
+            Debug.Log("successfully started LootLocker session");
+          });
+    }
+
+    if (guestId != "Nada")
+    {
+      LootLockerSDKManager.StartGuestSession(guestId, (response) =>
+          {
+            if (!response.success)
+            {
+              Debug.Log("error starting LootLocker session");
+              showErrorMessage("Error logging in as a guest");
+              startGuestLoginButtonAnimator.SetTrigger("Error");
+
+              startCanvasAnimator.CallAppearOnAllAnimators();
+              return;
+            }
+            startCanvasAnimator.CallDisappearOnAllAnimators();
+            // Load game screen
+            Debug.Log(response.public_uid);
+            CheckIfPlayerHasName(response.public_uid);
+            //save identifier to player prefs
+            PlayerPrefs.SetString("guestId", response.player_identifier);
+            Debug.Log("successfully started LootLocker session");
+          });
+    }
+
+
   }
 
   private string extractMessageFromLootLockerError(string rawError)

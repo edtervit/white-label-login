@@ -4,33 +4,37 @@ using UnityEngine;
 
 public class CanvasAnimator : MonoBehaviour
 {
-    public List<Animator> animators = new List<Animator>();
+  public List<Animator> animators = new List<Animator>();
 
-    public bool callAppearOnStart;
+  public bool callAppearOnStart;
 
-    void Start()
+  void Start()
+  {
+    if (callAppearOnStart)
     {
-        if(callAppearOnStart)
-        {
-            CallAppearOnAllAnimators();
-        }
+      CallAppearOnAllAnimators();
     }
+  }
 
-    public void CallAppearOnAllAnimators()
+  public void CallAppearOnAllAnimators()
+  {
+    foreach (Animator anim in animators)
     {
-        foreach (Animator anim in animators)
-        {
-            anim.ResetTrigger("Hide");
-            anim.SetTrigger("Show");
-        }
+      anim.ResetTrigger("Hide");
+      anim.SetTrigger("Show");
     }
-
-    public void CallDisappearOnAllAnimators()
+  }
+  // can pass an animators name to skip it 
+  public void CallDisappearOnAllAnimators(string skip = "")
+  {
+    foreach (Animator anim in animators)
     {
-        foreach (Animator anim in animators)
-        {
-            anim.ResetTrigger("Show");
-            anim.SetTrigger("Hide");
-        }
+      if (anim.name == skip)
+      {
+        continue;
+      }
+      anim.ResetTrigger("Show");
+      anim.SetTrigger("Hide");
     }
+  }
 }
