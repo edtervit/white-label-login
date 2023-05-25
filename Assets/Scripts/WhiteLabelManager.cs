@@ -150,6 +150,7 @@ public class WhiteLabelManager : MonoBehaviour
             }
             else
             {
+              PlayerPrefs.SetString("LLplayerId", response.player_id.ToString());
               // Session was succesfully started;
               // animate the buttons
               loginButtonAnimator.SetTrigger("LoggedIn");
@@ -190,7 +191,6 @@ public class WhiteLabelManager : MonoBehaviour
         }
       }
     });
-
 
   }
 
@@ -487,7 +487,6 @@ public class WhiteLabelManager : MonoBehaviour
       // Start to spin the login button
       loginButtonAnimator.ResetTrigger("Hide");
       loginButtonAnimator.SetTrigger("Hide");
-      //   loginButtonAnimator.SetTrigger("Login");
 
       LootLockerSDKManager.CheckWhiteLabelSession(response =>
       {
@@ -509,10 +508,10 @@ public class WhiteLabelManager : MonoBehaviour
                 {
                   if (response.success)
                   {
+                    PlayerPrefs.SetString("LLplayerId", response.player_id.ToString());
                     // It was succeful, log in
                     loginButtonAnimator.SetTrigger("Hide");
                     loginBackButtonAnimator.SetTrigger("Hide");
-                    gameCanvasAnimator.CallAppearOnAllAnimators();
                     // Write the current players name to the screen
                     CheckIfPlayerHasName(response.public_uid);
                   }
@@ -617,9 +616,11 @@ public class WhiteLabelManager : MonoBehaviour
         // Leaderboard was retrieved
         Debug.Log("Leaderboard was retrieved");
         //show the leaderboard screen and populate it with the data
-        // gameLeaderboardButtonAnimator.SetTrigger("Hide");
         leaderboardCanvasAnimator.CallAppearOnAllAnimators();
         gameLeaderboardButtonAnimator.SetTrigger("Hide");
+
+        leaderboardGamerText.text = "GAMER";
+        leaderboardScoreText.text = "SCORE";
 
         //for each item 
         foreach (LootLockerLeaderboardMember score in response.items)
@@ -652,8 +653,6 @@ public class WhiteLabelManager : MonoBehaviour
     gameLeaderboardButtonAnimator.ResetTrigger("Error");
   }
 
-
-
   public void GuestLogin()
   {
     //made guest login spin to show loading
@@ -666,7 +665,7 @@ public class WhiteLabelManager : MonoBehaviour
 
     //if theres a player identifier saved in browser, log the user in with that, if not create a new guest session
 
-    string guestId = PlayerPrefs.GetString("guestId", "Nada");
+    string guestId = PlayerPrefs.GetString("LLguestId", "Nada");
 
     if (guestId == "Nada")
     {
@@ -681,12 +680,14 @@ public class WhiteLabelManager : MonoBehaviour
               startCanvasAnimator.CallAppearOnAllAnimators();
               return;
             }
+            PlayerPrefs.SetString("LLplayerId", response.player_id.ToString());
+
             startCanvasAnimator.CallDisappearOnAllAnimators();
             // Load game screen
             Debug.Log(response.public_uid);
             CheckIfPlayerHasName(response.public_uid);
             //save identifier to player prefs
-            PlayerPrefs.SetString("guestId", response.player_identifier);
+            PlayerPrefs.SetString("LLguestId", response.player_identifier);
             Debug.Log("successfully started LootLocker session");
           });
     }
@@ -704,12 +705,13 @@ public class WhiteLabelManager : MonoBehaviour
               startCanvasAnimator.CallAppearOnAllAnimators();
               return;
             }
+            PlayerPrefs.SetString("LLplayerId", response.player_id.ToString());
             startCanvasAnimator.CallDisappearOnAllAnimators();
             // Load game screen
             Debug.Log(response.public_uid);
             CheckIfPlayerHasName(response.public_uid);
             //save identifier to player prefs
-            PlayerPrefs.SetString("guestId", response.player_identifier);
+            PlayerPrefs.SetString("LLguestId", response.player_identifier);
             Debug.Log("successfully started LootLocker session");
           });
     }
