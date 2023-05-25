@@ -12,5 +12,6 @@
     - turn steps into script 
     - record video of me adding
     - voice over the video
+    - create demo to put at the start of the video 
 
 
