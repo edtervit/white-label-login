@@ -5,9 +5,11 @@
     - Leadearboard screen a scene?
     - Prefab it?
   - Logout Button + code 
+  - Transitions between scenes https://www.youtube.com/watch?v=CE9VOZivb3I - LoadSceneAsync
   - Fully bug test 
   - REMEMBER update leaderboardKey variable + remove my API keys before exporting
   - Create video explainer that shows me adding it to cranky g simulator 
+    - list of prerequisites
     - do it normally writing down the steps
     - turn steps into script 
     - record video of me adding
