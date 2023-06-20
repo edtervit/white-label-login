@@ -1,11 +1,9 @@
 - Make leaderboard system copyable	
   - Make game screen more re-usable 
-  - Create example game main menu scene
-  - Move leaderboard button + code out of white label 
-    - Leadearboard screen a scene?
-    - Prefab it?
-  - Logout Button + code 
-  - Transitions between scenes https://www.youtube.com/watch?v=CE9VOZivb3I - LoadSceneAsync
+    - make game screen a scene ✅
+      - update code to load this scene ✅
+    - make leaderboard screen a scene ✅
+  - update README
   - Fully bug test 
   - REMEMBER update leaderboardKey variable + remove my API keys before exporting
   - Create video explainer that shows me adding it to cranky g simulator 
@@ -16,4 +14,7 @@
     - voice over the video
     - create demo to put at the start of the video 
 
-
+- Personalised web based login and auth system that requires no setup on a users behalf 
+  - signup, password reset 
+  - login package users can drag and drop into their game with external links for signup etc
+  - making it as simple as possible for a user to implement auth into their game

@@ -3,9 +3,12 @@ using TMPro;
 using System;
 using UnityEngine.UI;
 using LootLocker.Requests;
+using UnityEngine.SceneManagement;
 
 public class WhiteLabelManager : MonoBehaviour
 {
+  private string gameSceneName = "ExampleMainMenu";
+
   // Input fields
   [Header("New User")]
   public TMP_InputField newUserEmailInputField;
@@ -75,11 +78,6 @@ public class WhiteLabelManager : MonoBehaviour
   [Header("New Player Name")]
   public TMP_InputField newPlayerNameInputField;
 
-  [Header("Leaderboard")]
-  public TextMeshProUGUI leaderboardGamerText;
-  public TextMeshProUGUI leaderboardScoreText;
-
-
   [Header("Player name")]
   public TextMeshProUGUI playerNameText;
   public Animator playerNameTextAnimator;
@@ -91,7 +89,7 @@ public class WhiteLabelManager : MonoBehaviour
   public void PlayGame()
   {
     //load scene
-    UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+    SceneManager.LoadScene(gameSceneName);
   }
 
   // Called when pressing "LOGIN" on the login-page
@@ -104,13 +102,14 @@ public class WhiteLabelManager : MonoBehaviour
     {
       if (error.Contains("message"))
       {
-        showErrorMessage(extractMessageFromLootLockerError(error));
+        ShowErrorMessage(ExtractMessageFromLootLockerError(error));
       }
 
       if (!error.Contains("message"))
       {
-        showErrorMessage("Error logging in");
+        ShowErrorMessage("Error logging in");
       }
+
       loginButtonAnimator.SetTrigger("Error");
       loginRememberMeAnimator.SetTrigger("Show");
       loginEmailInputFieldAnimator.SetTrigger("Show");
@@ -144,7 +143,6 @@ public class WhiteLabelManager : MonoBehaviour
             if (!response.success)
             {
               // Error
-              // Animate the buttons
               isError(response.Error);
               return;
             }
@@ -157,9 +155,7 @@ public class WhiteLabelManager : MonoBehaviour
               loginButtonAnimator.SetTrigger("Hide");
               gameLogoutButtonAnimator.SetTrigger("Show");
               Debug.Log("session started successfully");
-              // Write the current players name to the screen
               CheckIfPlayerHasName(response.public_uid);
-              //   SetPlayerNameToGameScreen();
             }
           });
     });
@@ -187,14 +183,15 @@ public class WhiteLabelManager : MonoBehaviour
           // Player has a name, continue
           Debug.Log("Player has a name: " + response.name);
           playerName = response.name;
-          SetPlayerNameToGameScreen(playerName);
+          //load the game
+          PlayGame();
         }
       }
     });
 
   }
 
-  public void updatePlayerName()
+  public void UpdatePlayerName()
   {
     newNickNameCreateButtonAnimator.SetTrigger("UpdateName");
     newNickNameLogOutButtonAnimator.SetTrigger("Hide");
@@ -203,7 +200,7 @@ public class WhiteLabelManager : MonoBehaviour
     string newPlayerName = newPlayerNameInputField.text;
     if (newPlayerName == "")
     {
-      showErrorMessage("Please enter a display name");
+      ShowErrorMessage("Please enter a display name");
       return;
     }
 
@@ -211,17 +208,17 @@ public class WhiteLabelManager : MonoBehaviour
     {
       if (error.Contains("message"))
       {
-        string message = extractMessageFromLootLockerError(error);
-        if (message.Contains("UNIQUE")) showErrorMessage("Display name already taken");
+        string message = ExtractMessageFromLootLockerError(error);
+        if (message.Contains("UNIQUE")) ShowErrorMessage("Display name already taken");
         else
         {
-          showErrorMessage(message);
+          ShowErrorMessage(message);
         }
       }
 
       if (!error.Contains("message"))
       {
-        showErrorMessage("Error setting display name");
+        ShowErrorMessage("Error setting display name");
       }
       newNickNameCreateButtonAnimator.ResetTrigger("UpdateName");
       newNickNameLogOutButtonAnimator.SetTrigger("Show");
@@ -242,37 +239,13 @@ public class WhiteLabelManager : MonoBehaviour
       setDisplayNameCanvasAnimator.CallDisappearOnAllAnimators();
       newNickNameCreateButtonAnimator.SetTrigger("Hide");
       // Write the players name to the screen
-      SetPlayerNameToGameScreen();
+      //load the game
+      PlayGame();
     });
-  }
-
-  // Write the players name to the screen
-  void SetPlayerNameToGameScreen(string playerName = null)
-  {
-    if (playerName != null)
-    {
-      playerNameTextAnimator.ResetTrigger("Hide");
-      playerNameTextAnimator.SetTrigger("Show");
-      playerNameText.text = playerName;
-    }
-    else
-    {
-      LootLockerSDKManager.GetPlayerName((response) =>
-    {
-      if (response.success)
-      {
-        playerNameTextAnimator.ResetTrigger("Hide");
-        playerNameTextAnimator.SetTrigger("Show");
-        playerNameText.text = response.name;
-      }
-    });
-    }
-    //show all game buttons
-    gameCanvasAnimator.CallAppearOnAllAnimators();
   }
 
   // Show an error message on the screen
-  public void showErrorMessage(string message, int showTime = 3)
+  public void ShowErrorMessage(string message, int showTime = 3)
   {
     //set active
     errorPanel.SetActive(true);
@@ -282,12 +255,12 @@ public class WhiteLabelManager : MonoBehaviour
     Invoke("hideErrorMessage", showTime);
   }
 
-  private void hideErrorMessage()
+  private void HideErrorMessage()
   {
     errorScreenAnimator.SetTrigger("Hide");
   }
 
-  public void logout()
+  public void Logout()
   {
     //remove the auto remember
     PlayerPrefs.SetInt("rememberMe", 0);
@@ -312,9 +285,10 @@ public class WhiteLabelManager : MonoBehaviour
       {
         if (!response.success)
         {
-          showErrorMessage("Error logging out");
+          ShowErrorMessage("Error logging out");
           return;
         }
+        PlayerPrefs.DeleteKey("LLplayerId");
         Debug.Log("Logged Out");
       });
 
@@ -330,14 +304,14 @@ public class WhiteLabelManager : MonoBehaviour
 
     if (email.Length < 1 || password.Length < 1)
     {
-      showErrorMessage("Please fill in all fields");
+      ShowErrorMessage("Please fill in all fields");
       return;
     }
 
     //if password is shorter than 8 characters display an error
     if (password.Length < 8)
     {
-      showErrorMessage("Password must be at least 8 characters long");
+      ShowErrorMessage("Password must be at least 8 characters long");
       return;
     }
 
@@ -345,12 +319,12 @@ public class WhiteLabelManager : MonoBehaviour
     {
       if (error.Contains("message"))
       {
-        showErrorMessage(extractMessageFromLootLockerError(error));
+        ShowErrorMessage(ExtractMessageFromLootLockerError(error));
       }
 
       if (!error.Contains("message"))
       {
-        showErrorMessage("Error creating account");
+        ShowErrorMessage("Error creating account");
       }
       createButtonAnimator.SetTrigger("Error");
 
@@ -404,13 +378,13 @@ public class WhiteLabelManager : MonoBehaviour
                         {
                           if (!response.success)
                           {
-                            showErrorMessage("Your account was created but your display name was already taken, you'll be asked to set it when you log in.", 5);
+                            ShowErrorMessage("Your account was created but your display name was already taken, you'll be asked to set it when you log in.", 5);
                             // Set public UID as name if setting nickname failed
                             LootLockerSDKManager.SetPlayerName(publicUID, (response) =>
                                 {
                                   if (!response.success)
                                   {
-                                    showErrorMessage("Your account was created but your display name was already taken, you'll be asked to set it when you log in.", 5);
+                                    ShowErrorMessage("Your account was created but your display name was already taken, you'll be asked to set it when you log in.", 5);
                                   }
                                 });
                           }
@@ -421,7 +395,7 @@ public class WhiteLabelManager : MonoBehaviour
                             {
                               if (!response.success)
                               {
-                                showErrorMessage("Account created but error ending session");
+                                ShowErrorMessage("Account created but error ending session");
                                 return;
                               }
                               Debug.Log("Account Created");
@@ -558,15 +532,13 @@ public class WhiteLabelManager : MonoBehaviour
 
         if (response.Error.Contains("message"))
         {
-          showErrorMessage(extractMessageFromLootLockerError(response.Error));
+          ShowErrorMessage(ExtractMessageFromLootLockerError(response.Error));
         }
-
 
         if (!response.Error.Contains("message"))
         {
-          showErrorMessage("Error requesting password reset");
+          ShowErrorMessage("Error requesting password reset");
         }
-
 
         resetPasswordButtonAnimator.SetTrigger("Error");
 
@@ -596,63 +568,6 @@ public class WhiteLabelManager : MonoBehaviour
     });
   }
 
-  public void GetLeaderboardData()
-  {
-
-    //hide all other buttons
-    gameCanvasAnimator.CallDisappearOnAllAnimators(gameLeaderboardButtonAnimator.name);
-    //show leaderboard button and make it spin while loading
-    gameLeaderboardButtonAnimator.SetTrigger("LoadingLeaderboard");
-
-    // the leaderboard key you chose when making a leaderboard in the LootLocker admin panel  
-    string leaderboardKey = "crankyGHighscore";
-    //how many scores to retrieve
-    int count = 10;
-
-    LootLockerSDKManager.GetScoreList(leaderboardKey, count, 0, (response) =>
-    {
-      if (response.success)
-      {
-        // Leaderboard was retrieved
-        Debug.Log("Leaderboard was retrieved");
-        //show the leaderboard screen and populate it with the data
-        leaderboardCanvasAnimator.CallAppearOnAllAnimators();
-        gameLeaderboardButtonAnimator.SetTrigger("Hide");
-
-        leaderboardGamerText.text = "GAMER";
-        leaderboardScoreText.text = "SCORE";
-
-        //for each item 
-        foreach (LootLockerLeaderboardMember score in response.items)
-        {
-          //add the score to the text
-          leaderboardGamerText.text += "\n" + score.rank + ". " + score.player.name;
-          leaderboardScoreText.text += "\n" + score.score.ToString();
-        }
-
-      }
-      else
-      {
-        // Error
-        Debug.Log(response.Error);
-        if (response.Error.Contains("message"))
-        {
-          showErrorMessage(extractMessageFromLootLockerError(response.Error));
-        }
-        else
-        {
-          showErrorMessage("Error retrieving leaderboard");
-        }
-        // gameLeaderboardButtonAnimator.SetTrigger("Error");
-        gameCanvasAnimator.CallAppearOnAllAnimators();
-      }
-    });
-
-    //reset all triggers
-    gameLeaderboardButtonAnimator.ResetTrigger("IdleSpin");
-    gameLeaderboardButtonAnimator.ResetTrigger("Error");
-  }
-
   public void GuestLogin()
   {
     //made guest login spin to show loading
@@ -674,7 +589,7 @@ public class WhiteLabelManager : MonoBehaviour
             if (!response.success)
             {
               Debug.Log("error starting LootLocker session");
-              showErrorMessage("Error logging in as a guest");
+              ShowErrorMessage("Error logging in as a guest");
               startGuestLoginButtonAnimator.SetTrigger("Error");
 
               startCanvasAnimator.CallAppearOnAllAnimators();
@@ -699,7 +614,7 @@ public class WhiteLabelManager : MonoBehaviour
             if (!response.success)
             {
               Debug.Log("error starting LootLocker session");
-              showErrorMessage("Error logging in as a guest");
+              ShowErrorMessage("Error logging in as a guest");
               startGuestLoginButtonAnimator.SetTrigger("Error");
 
               startCanvasAnimator.CallAppearOnAllAnimators();
@@ -719,7 +634,7 @@ public class WhiteLabelManager : MonoBehaviour
 
   }
 
-  private string extractMessageFromLootLockerError(string rawError)
+  private string ExtractMessageFromLootLockerError(string rawError)
   {
     //find in the string "message":" and split the string there
     int first = rawError.IndexOf("\"message\":\"") + "\"message\":\"".Length;

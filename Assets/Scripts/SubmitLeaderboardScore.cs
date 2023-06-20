@@ -8,7 +8,6 @@ public class SubmitLeaderboardScore : MonoBehaviour
 {
   public static string leaderboardKey = "crankyGHighscore";
 
-
   public static void Submit(int scoreToSubmit)
   {
     //the member id is set when the user logs in or uses guest login, if they have not done either of those then this will be empty and the request will fail.

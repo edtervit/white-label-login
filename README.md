@@ -15,9 +15,9 @@ Draft for user installation instructions so anyone can plug and play LootLockers
 --- 
 
  	- copy package 
-	-  File > build settings > open scene foled in project, drag the scene into “scenes in build” in the build settings. Put it at the top so it appears before the game
+	-  File > build settings > open scene folder in project, drag the scene into “scenes in build” in the build settings. Put it at the top so it appears before the game
 	- Edit > project settings > Lootlocker SDK > input your api key and domain key 
-	- Open the scripts folder > open WhiteLabelManager > Find the function PlayGame() > change the “GameScene” to the name of the scene you want to load when the user presses play
+	- Open the scripts folder > open WhiteLabelManager.cs and update the private string gameSceneName at the top with the name of your main menu scene, or leave it as
 	- To get the leaderboard to work 
 		- Enable Game API writes in the loot locker web console for your leaderboard (https://console.lootlocker.com/leaderboards > edit > enable game API writes) 
 		- Open WhiteLabelManager Script > ctrl/cmd + f > search for leaderboardKey > update this with the key of your leaderboard (leaderboard key can be found at https://console.lootlocker.com/leaderboards > click edit on the leaderboard you want to use > key) 
