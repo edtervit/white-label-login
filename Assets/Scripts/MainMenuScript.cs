@@ -10,6 +10,7 @@ public class MainMenuScript : MonoBehaviour
 
   private string loginSceneName = "WhiteLabelAndGuestLogin";
   private string leaderboardSceneName = "LeaderboardScreen";
+  private string playGameSceneName = "N/A";
 
   [Header("Player Name")]
   public TextMeshProUGUI playerNameText;
@@ -61,6 +62,11 @@ public class MainMenuScript : MonoBehaviour
   public void goToLeaderboard()
   {
     SceneManager.LoadScene(leaderboardSceneName);
+  }
+
+  public void startGame()
+  {
+    SceneManager.LoadScene(playGameSceneName);
   }
 
   // Show an error message on the screen

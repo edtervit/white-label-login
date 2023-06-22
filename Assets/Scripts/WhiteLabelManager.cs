@@ -60,14 +60,6 @@ public class WhiteLabelManager : MonoBehaviour
   // error screen
   public Animator errorScreenAnimator;
 
-  // leaderboard screen
-  public CanvasAnimator leaderboardCanvasAnimator;
-
-  //game screen
-  public Animator gameLogoutButtonAnimator;
-  public Animator gameLeaderboardButtonAnimator;
-  public CanvasAnimator gameCanvasAnimator;
-
   //newName screen
   public Animator newNickNameInputFieldAnimator;
   public Animator newNickNameLogOutButtonAnimator;
@@ -153,7 +145,6 @@ public class WhiteLabelManager : MonoBehaviour
               // animate the buttons
               loginButtonAnimator.SetTrigger("LoggedIn");
               loginButtonAnimator.SetTrigger("Hide");
-              gameLogoutButtonAnimator.SetTrigger("Show");
               Debug.Log("session started successfully");
               CheckIfPlayerHasName(response.public_uid);
             }
@@ -252,7 +243,7 @@ public class WhiteLabelManager : MonoBehaviour
     errorText.text = message.ToUpper();
     errorScreenAnimator.SetTrigger("Show");
     //wait for 3 seconds and hide the error panel
-    Invoke("hideErrorMessage", showTime);
+    Invoke("HideErrorMessage", showTime);
   }
 
   private void HideErrorMessage()
@@ -271,9 +262,6 @@ public class WhiteLabelManager : MonoBehaviour
     createButtonAnimator.ResetTrigger("CreateAccount");
     createButtonAnimator.ResetTrigger("Login");
     createButtonAnimator.ResetTrigger("ResetPassword");
-
-    gameCanvasAnimator.CallDisappearOnAllAnimators();
-
 
     existingUserEmailInputField.text = "";
     existingUserPasswordInputField.text = "";

@@ -3,7 +3,7 @@
     - make game screen a scene ✅
       - update code to load this scene ✅
     - make leaderboard screen a scene ✅
-  - update README
+  - update README ✅
   - Fully bug test 
   - REMEMBER update leaderboardKey variable + remove my API keys before exporting
   - Create video explainer that shows me adding it to cranky g simulator 
