@@ -1,7 +1,4 @@
 using UnityEngine;
-using TMPro;
-using System;
-using UnityEngine.UI;
 using LootLocker.Requests;
 
 public class SubmitLeaderboardScore : MonoBehaviour
@@ -25,5 +22,23 @@ public class SubmitLeaderboardScore : MonoBehaviour
         Debug.LogError("Error: " + response.Error);
       }
     });
+  }
+
+  public static void GetPlayerHighScore()
+  {
+    string playerId = PlayerPrefs.GetString("LLplayerId");
+    LootLockerSDKManager.GetMemberRank(leaderboardKey, playerId, (response) =>
+      {
+        if (response.statusCode == 200)
+        {
+          Debug.Log("Successful");
+          Debug.Log("Player Score: " + response.score);
+          PlayerPrefs.SetInt("highScore", response.score);
+        }
+        else
+        {
+          Debug.Log("failed to get highscore: " + response.Error);
+        }
+      });
   }
 }

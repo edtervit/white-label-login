@@ -1,7 +1,5 @@
 using UnityEngine;
 using TMPro;
-using System;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using LootLocker.Requests;
 
@@ -42,6 +40,8 @@ public class MainMenuScript : MonoBehaviour
         playerNameText.text = response.name;
       }
     });
+
+    SubmitLeaderboardScore.GetPlayerHighScore();
 
     mainMenuAnimator.CallAppearOnAllAnimators();
 
